@@ -25,7 +25,7 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            z-index: 45;
+            z-index: 9999;
             cursor: pointer;
         }
 
@@ -226,6 +226,21 @@
         .orange-accent {
             color: #f97316;
         }
+
+        .api-iframe-container {
+            width: 100%;
+            height: 500px;
+            border: 2px solid #f97316;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .api-iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-100 font-sans">
@@ -304,8 +319,22 @@
         </div>
     </section>
 
+    <!-- API Integration Section -->
+    <section class="py-20 bg-gray-950">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-8">
+                <div class="text-orange-400 font-bold tracking-wider uppercase text-sm mb-2">🚀 Interactive API</div>
+                <h2 class="text-3xl sm:text-4xl font-black">Live Menu & Orders</h2>
+                <p class="text-gray-400 mt-2">Real-time API integration for orders and menu updates</p>
+            </div>
+            <div class="api-iframe-container">
+                <iframe src="https://animated-zebra-wv57r9xw69v6c9pw9-8000.app.github.dev/" title="BFC API Integration" allow="fullscreen"></iframe>
+            </div>
+        </div>
+    </section>
+
     <!-- Menu Section - Like Reviews Layout -->
-    <section id="menu" class="py-20 bg-gray-950">
+    <section id="menu" class="py-20 bg-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <div class="text-orange-400 font-bold tracking-wider uppercase text-sm mb-2">🔥 Customer Favorites</div>
@@ -426,7 +455,7 @@
     </section>
 
     <!-- Reviews Section -->
-    <section id="reviews" class="py-20 bg-gray-900">
+    <section id="reviews" class="py-20 bg-gray-950">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <div class="text-orange-400 font-bold tracking-wider uppercase text-sm mb-2">Testimonials</div>
@@ -479,7 +508,7 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-20 bg-gray-950 border-t border-gray-800">
+    <section id="contact" class="py-20 bg-gray-900 border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
                 <h2 class="text-3xl sm:text-4xl font-black mb-6">Visit Us or Order In</h2>
@@ -529,7 +558,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 py-8 border-t border-gray-800 text-center text-sm text-gray-500">
+    <footer class="bg-gray-950 py-8 border-t border-gray-800 text-center text-sm text-gray-500">
         <p>&copy; 2026 Burgers & Fried Chicken (BFC) Antwerp. All rights reserved.</p>
     </footer>
 
