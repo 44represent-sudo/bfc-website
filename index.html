@@ -7,41 +7,165 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
-            background: #0f0f0f;
-        }
-
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
-        @keyframes slideInCart {
-            from {
-                opacity: 0;
-                transform: translateX(100%);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .chicken-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 45;
+            cursor: pointer;
+        }
+
+        .chicken-head {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            box-shadow: 0 10px 30px rgba(249, 115, 22, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .chicken-head:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(249, 115, 22, 0.6);
+        }
+
+        .speech-bubble {
+            position: absolute;
+            bottom: 120px;
+            right: 0;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            max-width: 200px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .chicken-head:hover ~ .speech-bubble,
+        .speech-bubble:hover {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 20px;
+            width: 0;
+            height: 0;
+            border: 8px solid transparent;
+            border-top-color: #ea580c;
+        }
+
+        .menu-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(249, 115, 22, 0.2);
+        }
+
+        .menu-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .price-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);
+        }
+
+        .logo-img {
+            height: 50px;
+            width: auto;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            animation: slideUp 0.3s ease-out;
+            z-index: 1000;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
         }
 
         @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(16px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -49,298 +173,108 @@
             }
         }
 
-        .float-animation {
-            animation: float 3s ease-in-out infinite;
-        }
-
         .cart-drawer {
-            animation: slideInCart 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: slideIn 0.3s ease-out;
         }
 
-        .cart-drawer.exit {
-            animation: slideInCart 0.3s cubic-bezier(0.7, 0, 0.84, 0) reverse;
-        }
-
-        .cart-item {
-            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .cart-item.removing {
-            animation: slideUp 0.3s cubic-bezier(0.7, 0, 0.84, 0) reverse forwards;
-        }
-
-        .chicken-mascot {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 60px;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .chat-bubble {
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            color: white;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 14px;
-            max-width: 250px;
-            position: relative;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        .chat-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 20px;
-            width: 0;
-            height: 0;
-            border: 5px solid transparent;
-            border-top-color: #ea580c;
-        }
-
-        .suggested-question {
-            background: rgba(249, 115, 22, 0.1);
-            border: 1px solid rgba(249, 115, 22, 0.3);
-            padding: 10px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 13px;
-        }
-
-        .suggested-question:hover {
-            background: rgba(249, 115, 22, 0.2);
-            border-color: rgba(249, 115, 22, 0.6);
-            transform: translateY(-2px);
-        }
-
-        .menu-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
-        .menu-card:hover {
-            transform: translateY(-8px);
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
         }
 
         .quantity-control {
             display: flex;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.02);
-            overflow: hidden;
+            gap: 8px;
+            margin-top: 10px;
         }
 
         .quantity-control button {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255, 255, 255, 0.6);
-            transition: all 0.2s ease;
+            width: 28px;
+            height: 28px;
+            background: #f97316;
+            color: white;
             border: none;
-            background: none;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.2s;
         }
 
         .quantity-control button:hover {
-            color: rgba(255, 255, 255, 1);
-            background: rgba(255, 255, 255, 0.05);
+            background: #ea580c;
+            transform: scale(1.1);
         }
 
         .quantity-control input {
             width: 40px;
             text-align: center;
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 1);
-            font-size: 14px;
-            font-weight: 500;
+            border: 1px solid #f97316;
+            border-radius: 4px;
+            padding: 4px;
+            font-weight: bold;
         }
 
-        .summary-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 24px;
+        .hero-gradient {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
         }
 
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            margin-bottom: 12px;
-        }
-
-        .summary-row.total {
-            margin-bottom: 0;
-            padding-top: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .price-value {
-            font-size: 18px;
-            font-weight: 700;
-            color: rgba(255, 255, 255, 1);
-        }
-
-        .price-label {
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .divider {
-            height: 1px;
-            background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 100%);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 48px 24px;
-        }
-
-        .btn-primary {
-            background: #ffffff;
-            color: #0f0f0f;
-            font-weight: 600;
-            padding: 12px 24px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 14px;
-            letter-spacing: 0.3px;
-        }
-
-        .btn-primary:hover {
-            background: #f5f5f5;
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: rgba(255, 255, 255, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-weight: 500;
-            padding: 10px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 14px;
-        }
-
-        .btn-secondary:hover {
-            color: rgba(255, 255, 255, 1);
-            border-color: rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        .input-field {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 1);
-            padding: 10px 14px;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.06);
-        }
-
-        .cart-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            width: 20px;
-            height: 20px;
-            background: #ffffff;
-            color: #0f0f0f;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .remove-button {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 14px;
-        }
-
-        .remove-button:hover {
-            background: rgba(255, 67, 54, 0.2);
-            border-color: rgba(255, 67, 54, 0.4);
-            color: rgba(255, 67, 54, 1);
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: rgba(255, 255, 255, 0.95);
-            color: #0f0f0f;
-            padding: 14px 20px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 1000;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        .orange-accent {
+            color: #f97316;
         }
     </style>
 </head>
-<body class="bg-gray-950 text-gray-100 font-sans overflow-x-hidden">
+<body class="bg-gray-900 text-gray-100 font-sans">
 
     <!-- Header / Navbar -->
-    <header class="sticky top-0 z-50 bg-gray-950/95 backdrop-blur-md border-b border-gray-800/50">
+    <header class="sticky top-0 z-50 bg-gray-900/95 backdrop-blur border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
             <div class="flex items-center space-x-3">
-                <div class="text-3xl">🐔</div>
+                <svg class="logo-img" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="#f97316">
+                        <!-- Rooster body -->
+                        <circle cx="80" cy="100" r="35"/>
+                        <!-- Rooster neck -->
+                        <ellipse cx="80" cy="60" rx="20" ry="30"/>
+                        <!-- Rooster head -->
+                        <circle cx="80" cy="35" r="18"/>
+                        <!-- Rooster eye -->
+                        <circle cx="85" cy="32" r="4" fill="white"/>
+                        <circle cx="86" cy="32" r="2" fill="black"/>
+                        <!-- Rooster beak -->
+                        <path d="M 95 35 L 110 33 L 95 37 Z"/>
+                        <!-- Rooster comb (feathers) -->
+                        <path d="M 80 15 Q 70 5 75 20 Q 65 10 72 25 Q 60 15 70 30 Q 65 25 78 35"/>
+                        <!-- Rooster tail feathers -->
+                        <path d="M 50 90 Q 30 70 35 100 Q 20 95 25 110 Q 15 105 30 120"/>
+                        <path d="M 55 75 Q 45 50 50 85 Q 35 75 42 95 Q 28 90 42 110"/>
+                        <!-- Rooster wing -->
+                        <path d="M 75 110 Q 55 100 60 130 Q 40 120 50 140"/>
+                    </g>
+                </svg>
                 <div>
-                    <span class="text-2xl font-black bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">BFC</span>
-                    <p class="text-xs text-gray-500 font-semibold">Burgers & Fried Chicken</p>
+                    <span class="text-2xl font-black text-orange-500">BFC</span>
+                    <p class="text-xs text-orange-400 font-bold">Burgers & Fried Chicken</p>
                 </div>
             </div>
+
             <nav class="hidden md:flex space-x-8 text-sm font-medium">
-                <a href="#menu" class="hover:text-orange-400 transition duration-300">Menu</a>
-                <a href="#reviews" class="hover:text-orange-400 transition duration-300">Reviews</a>
-                <a href="#chat" class="hover:text-orange-400 transition duration-300">Ask Clucky</a>
-                <a href="#contact" class="hover:text-orange-400 transition duration-300">Contact</a>
+                <a href="#menu" class="hover:text-orange-500 transition">Menu</a>
+                <a href="#reviews" class="hover:text-orange-500 transition">Reviews</a>
+                <a href="#contact" class="hover:text-orange-500 transition">Contact</a>
             </nav>
+
             <div class="flex items-center gap-4">
-                <button onclick="openCart()" class="relative p-3 hover:bg-gray-800/50 rounded-lg transition">
-                    <i class="fa-solid fa-bag-shopping text-orange-400 text-xl"></i>
-                    <div class="cart-badge" id="cartCount" style="display:none;">0</div>
+                <button onclick="openCart()" class="relative p-3 hover:bg-gray-800 rounded-lg transition">
+                    <i class="fa-solid fa-bag-shopping text-orange-500 text-xl"></i>
+                    <div class="cart-badge" id="cartBadge" style="display:none;">0</div>
                 </button>
-                <a href="tel:+32497796811" class="hidden sm:flex bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition duration-300 items-center gap-2 shadow-lg shadow-orange-500/20">
+                <a href="tel:+32497796811" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2">
                     <i class="fa-solid fa-phone"></i> Order
                 </a>
             </div>
@@ -348,183 +282,143 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="relative bg-gradient-to-b from-gray-900 via-gray-950 to-gray-950 py-24 lg:py-40 overflow-hidden">
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute top-10 right-10 w-72 h-72 bg-orange-500/10 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-10 left-10 w-72 h-72 bg-orange-400/10 rounded-full blur-3xl"></div>
-        </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-            <div class="inline-flex items-center gap-2 bg-orange-500/10 text-orange-400 px-4 py-2 rounded-full text-sm font-semibold mb-8 border border-orange-500/30 backdrop-blur-sm">
-                <i class="fa-solid fa-star"></i> 4.8/5 Rating • 150+ Reviews
+    <section class="hero-gradient py-20 lg:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="inline-block bg-orange-500/20 text-orange-400 px-4 py-2 rounded-full text-sm font-bold mb-6 border border-orange-500/40">
+                ⭐ 4.8/5 Rating • 150+ Google Reviews
             </div>
-            <h1 class="text-5xl sm:text-7xl font-black tracking-tight mb-8 leading-tight">
-                The <span class="bg-gradient-to-r from-orange-400 via-orange-500 to-red-500 bg-clip-text text-transparent">Crispiest & Juiciest</span> Food in Antwerp
+            <h1 class="text-5xl sm:text-7xl font-black tracking-tight mb-6 leading-tight">
+                The Best <span class="text-orange-500">Burgers & Fried Chicken</span> in Antwerp
             </h1>
-            <p class="max-w-2xl mx-auto text-lg text-gray-400 mb-12 leading-relaxed">
-                Smash burgers with secret garlic sauce, crispy fried chicken that melts in your mouth, and massive portions that'll keep you full for days.
+            <p class="max-w-2xl mx-auto text-lg text-gray-300 mb-12">
+                Juicy smash burgers packed with flavor, massive portions, and irresistibly crispy fried chicken. You definitely won't leave hungry!
             </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4 flex-wrap">
-                <a href="#menu" class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold px-8 py-4 rounded-xl transition shadow-lg shadow-orange-500/30 transform hover:scale-105 duration-300">
-                    <i class="fa-solid fa-utensils mr-2"></i> Explore Menu
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#menu" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-8 py-4 rounded-xl transition shadow-lg shadow-orange-500/30">
+                    <i class="fa-solid fa-utensils mr-2"></i>Explore Menu
                 </a>
-                <a href="#chat" class="bg-gray-800/50 hover:bg-gray-800 text-gray-200 font-bold px-8 py-4 rounded-xl border border-gray-700/50 transition duration-300 backdrop-blur-sm">
-                    <i class="fa-solid fa-comments mr-2"></i> Chat with Clucky
+                <a href="tel:+32497796811" class="bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold px-8 py-4 rounded-xl border border-gray-700 transition">
+                    <i class="fa-solid fa-phone mr-2"></i>Order Now
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- AI Chicken Mascot Chat Section -->
-    <section id="chat" class="py-20 bg-gray-900/50 border-b border-gray-800/30">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl sm:text-4xl font-black mb-2">Meet Clucky 🐔</h2>
-                <p class="text-gray-400">Your friendly restaurant AI assistant</p>
-            </div>
-
-            <div class="bg-gray-800/30 border border-gray-700/50 rounded-3xl p-8 backdrop-blur-sm">
-                <!-- Chat Display -->
-                <div id="chatDisplay" class="flex flex-col items-start gap-6 mb-8 min-h-32 max-h-96 overflow-y-auto scrollbar-hide">
-                    <div class="flex items-end gap-4">
-                        <div class="chicken-mascot float-animation">🐔</div>
-                        <div class="chat-bubble">
-                            <div class="font-bold mb-1">Clucky</div>
-                            Hey there! I'm Clucky, your BFC guide! Ask me anything about our delicious menu, delivery, location, or why we're the best in Antwerp! 🍗
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Input Area -->
-                <div class="flex gap-3 mb-6">
-                    <input 
-                        type="text" 
-                        id="chatInput" 
-                        placeholder="Ask Clucky something..." 
-                        class="flex-1 bg-gray-700/50 border border-gray-600/50 text-white px-4 py-3 rounded-lg focus:outline-none focus:border-orange-500/50 transition"
-                        onkeypress="if(event.key==='Enter') sendMessage()"
-                    >
-                    <button 
-                        onclick="sendMessage()" 
-                        class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-lg font-bold transition duration-300 transform hover:scale-105"
-                    >
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </button>
-                </div>
-
-                <!-- Suggested Questions -->
-                <div class="space-y-3">
-                    <p class="text-xs text-gray-500 font-semibold uppercase tracking-wider">Quick Questions:</p>
-                    <div class="flex flex-wrap gap-2">
-                        <div class="suggested-question" onclick="askQuestion('What are your opening hours?')">
-                            <i class="fa-solid fa-clock mr-2"></i> Opening Hours
-                        </div>
-                        <div class="suggested-question" onclick="askQuestion('What is your most popular burger?')">
-                            <i class="fa-solid fa-star mr-2"></i> Most Popular Burger
-                        </div>
-                        <div class="suggested-question" onclick="askQuestion('Do you deliver? What platforms?')">
-                            <i class="fa-solid fa-truck mr-2"></i> Delivery Info
-                        </div>
-                        <div class="suggested-question" onclick="askQuestion('What makes your fried chicken special?')">
-                            <i class="fa-solid fa-heart mr-2"></i> Chicken Special
-                        </div>
-                        <div class="suggested-question" onclick="askQuestion('What are your prices?')">
-                            <i class="fa-solid fa-tag mr-2"></i> Pricing
-                        </div>
-                        <div class="suggested-question" onclick="askQuestion('How can I order?')">
-                            <i class="fa-solid fa-phone mr-2"></i> How to Order
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Menu Section -->
+    <!-- Menu Section - Like Reviews Layout -->
     <section id="menu" class="py-20 bg-gray-950">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <span class="text-orange-400 font-bold tracking-wider uppercase text-sm">Customer Favorites</span>
-                <h2 class="text-3xl sm:text-4xl font-black mt-2 mb-4">Our Signature Menu 🔥</h2>
-                <p class="text-gray-400">Handcrafted with love and the finest ingredients</p>
+                <div class="text-orange-400 font-bold tracking-wider uppercase text-sm mb-2">🔥 Customer Favorites</div>
+                <h2 class="text-3xl sm:text-4xl font-black">Our Signature Menu</h2>
+                <p class="text-gray-400 mt-2">Handcrafted with love and the finest ingredients</p>
             </div>
 
-            <!-- Menu Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Garlic Burger -->
-                <div class="menu-card bg-gray-900/50 border border-gray-700/50 rounded-2xl overflow-hidden backdrop-blur-sm hover:border-orange-500/50 p-6">
-                    <div class="text-6xl mb-4">🍔</div>
-                    <h3 class="text-xl font-bold mb-2">Garlic Burger</h3>
-                    <p class="text-gray-400 text-sm mb-4">Juicy smash burger with our secret garlic-infused homemade sauce, premium beef, and crispy golden buns.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-2xl font-black text-orange-400">€8.99</span>
-                        <button onclick="addToCart({id: 1, name: 'Garlic Burger', price: 8.99, image: '🍔', variants: {size: 'Regular'}})" class="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg transition transform hover:scale-110">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Menu Item 1 -->
+                <div class="menu-card bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
+                    <div class="relative">
+                        <div style="width: 100%; height: 250px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); display: flex; align-items: center; justify-content: center; font-size: 80px;">🍔</div>
+                        <div class="price-badge">€8.99</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-white">Garlic Burger</h3>
+                        <p class="text-gray-300 text-sm mb-4">Juicy beef patty with our secret garlic-infused homemade sauce, premium beef, and crispy golden buns.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-orange-400 font-bold">⭐ 10/10</span>
+                            <button onclick="addToCart({id: 1, name: 'Garlic Burger', price: 8.99})" class="add-btn text-white font-bold px-4 py-2 rounded-lg">
+                                <i class="fa-solid fa-plus"></i> Add
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Crispy Fried Chicken -->
-                <div class="menu-card bg-gray-900/50 border border-gray-700/50 rounded-2xl overflow-hidden backdrop-blur-sm hover:border-orange-500/50 p-6">
-                    <div class="text-6xl mb-4">🍗</div>
-                    <h3 class="text-xl font-bold mb-2">2pc Crispy Chicken</h3>
-                    <p class="text-gray-400 text-sm mb-4">Crunchy golden exterior, impossibly juicy inside. Perfectly seasoned with our secret blend of spices.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-2xl font-black text-orange-400">€7.49</span>
-                        <button onclick="addToCart({id: 2, name: '2pc Crispy Chicken', price: 7.49, image: '🍗', variants: {pieces: '2pc'}})" class="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg transition transform hover:scale-110">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
+                <!-- Menu Item 2 -->
+                <div class="menu-card bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
+                    <div class="relative">
+                        <div style="width: 100%; height: 250px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); display: flex; align-items: center; justify-content: center; font-size: 80px;">🍗</div>
+                        <div class="price-badge">€7.49</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-white">2pc Crispy Chicken</h3>
+                        <p class="text-gray-300 text-sm mb-4">Crunchy golden exterior, impossibly juicy inside. Perfectly seasoned with our secret blend of spices.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-orange-400 font-bold">⭐ 10/10</span>
+                            <button onclick="addToCart({id: 2, name: '2pc Crispy Chicken', price: 7.49})" class="add-btn text-white font-bold px-4 py-2 rounded-lg">
+                                <i class="fa-solid fa-plus"></i> Add
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Smash Burger & Fries -->
-                <div class="menu-card bg-gray-900/50 border border-gray-700/50 rounded-2xl overflow-hidden backdrop-blur-sm hover:border-orange-500/50 p-6">
-                    <div class="text-6xl mb-4">🍟</div>
-                    <h3 class="text-xl font-bold mb-2">Smash Burger Meal</h3>
-                    <p class="text-gray-400 text-sm mb-4">Double patty smash burger packed with flavor, served with massive portions of crispy golden fries and a drink.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-2xl font-black text-orange-400">€12.99</span>
-                        <button onclick="addToCart({id: 3, name: 'Smash Burger Meal', price: 12.99, image: '🍟', variants: {size: 'Large'}})" class="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg transition transform hover:scale-110">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
+                <!-- Menu Item 3 -->
+                <div class="menu-card bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
+                    <div class="relative">
+                        <div style="width: 100%; height: 250px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); display: flex; align-items: center; justify-content: center; font-size: 80px;">🍟</div>
+                        <div class="price-badge">€12.99</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-white">Smash Burger Meal</h3>
+                        <p class="text-gray-300 text-sm mb-4">Double patty smash burger packed with flavor, served with massive portions of crispy golden fries.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-orange-400 font-bold">Popular</span>
+                            <button onclick="addToCart({id: 3, name: 'Smash Burger Meal', price: 12.99})" class="add-btn text-white font-bold px-4 py-2 rounded-lg">
+                                <i class="fa-solid fa-plus"></i> Add
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Chicken Combo -->
-                <div class="menu-card bg-gray-900/50 border border-gray-700/50 rounded-2xl overflow-hidden backdrop-blur-sm hover:border-orange-500/50 p-6">
-                    <div class="text-6xl mb-4">🍽️</div>
-                    <h3 class="text-xl font-bold mb-2">4pc Chicken Combo</h3>
-                    <p class="text-gray-400 text-sm mb-4">4 pieces of our crispy fried chicken with coleslaw, fries, and your choice of sauce.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-2xl font-black text-orange-400">€14.99</span>
-                        <button onclick="addToCart({id: 4, name: '4pc Chicken Combo', price: 14.99, image: '🍽️', variants: {pieces: '4pc'}})" class="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg transition transform hover:scale-110">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
+                <!-- Menu Item 4 -->
+                <div class="menu-card bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
+                    <div class="relative">
+                        <div style="width: 100%; height: 250px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); display: flex; align-items: center; justify-content: center; font-size: 80px;">🍽️</div>
+                        <div class="price-badge">€14.99</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-white">4pc Chicken Combo</h3>
+                        <p class="text-gray-300 text-sm mb-4">4 pieces of our crispy fried chicken with coleslaw, fries, and your choice of sauce.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-orange-400 font-bold">Family Fav</span>
+                            <button onclick="addToCart({id: 4, name: '4pc Chicken Combo', price: 14.99})" class="add-btn text-white font-bold px-4 py-2 rounded-lg">
+                                <i class="fa-solid fa-plus"></i> Add
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Premium Burger -->
-                <div class="menu-card bg-gray-900/50 border border-gray-700/50 rounded-2xl overflow-hidden backdrop-blur-sm hover:border-orange-500/50 p-6">
-                    <div class="text-6xl mb-4">👑</div>
-                    <h3 class="text-xl font-bold mb-2">The BFC Legend</h3>
-                    <p class="text-gray-400 text-sm mb-4">The ultimate smash burger! Triple patty with triple garlic sauce, bacon, melted cheese, and crispy onions.</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-2xl font-black text-orange-400">€16.99</span>
-                        <button onclick="addToCart({id: 5, name: 'The BFC Legend', price: 16.99, image: '👑', variants: {size: 'Large'}})" class="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg transition transform hover:scale-110">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
+                <!-- Menu Item 5 -->
+                <div class="menu-card bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
+                    <div class="relative">
+                        <div style="width: 100%; height: 250px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); display: flex; align-items: center; justify-content: center; font-size: 80px;">👑</div>
+                        <div class="price-badge">€16.99</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-white">The BFC Legend</h3>
+                        <p class="text-gray-300 text-sm mb-4">Triple patty masterpiece with triple garlic sauce, bacon, melted cheese, and crispy onions.</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-orange-400 font-bold">Premium</span>
+                            <button onclick="addToCart({id: 5, name: 'The BFC Legend', price: 16.99})" class="add-btn text-white font-bold px-4 py-2 rounded-lg">
+                                <i class="fa-solid fa-plus"></i> Add
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Family Bundle -->
-                <div class="menu-card bg-gray-900/50 border border-gray-700/50 rounded-2xl overflow-hidden backdrop-blur-sm hover:border-orange-500/50 p-6">
-                    <div class="text-6xl mb-4">👨‍👩‍👧‍👦</div>
-                    <h3 class="text-xl font-bold mb-2">Family Bundle</h3>
-                    <p class="text-gray-400 text-sm mb-4">2 burgers, 4pc chicken, large fries, coleslaw, and 4 drinks. Feeds a family of 4!</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-2xl font-black text-orange-400">€39.99</span>
-                        <button onclick="addToCart({id: 6, name: 'Family Bundle', price: 39.99, image: '👨‍👩‍👧‍👦', variants: {servings: '4 people'}})" class="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg transition transform hover:scale-110">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
+                <!-- Menu Item 6 -->
+                <div class="menu-card bg-gray-800/50 border border-gray-700/50 rounded-xl overflow-hidden">
+                    <div class="relative">
+                        <div style="width: 100%; height: 250px; background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); display: flex; align-items: center; justify-content: center; font-size: 80px;">👨‍👩‍👧‍👦</div>
+                        <div class="price-badge">€39.99</div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-white">Family Bundle</h3>
+                        <p class="text-gray-300 text-sm mb-4">2 burgers, 4pc chicken, large fries, coleslaw, and 4 drinks. Perfect for 4!</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-orange-400 font-bold">Save 15%</span>
+                            <button onclick="addToCart({id: 6, name: 'Family Bundle', price: 39.99})" class="add-btn text-white font-bold px-4 py-2 rounded-lg">
+                                <i class="fa-solid fa-plus"></i> Add
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -532,42 +426,51 @@
     </section>
 
     <!-- Reviews Section -->
-    <section id="reviews" class="py-20 bg-gray-900/50">
+    <section id="reviews" class="py-20 bg-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
-                <span class="text-orange-400 font-bold tracking-wider uppercase text-sm">Testimonials</span>
-                <h2 class="text-3xl sm:text-4xl font-black mt-2 mb-4">What People Are Saying</h2>
+                <div class="text-orange-400 font-bold tracking-wider uppercase text-sm mb-2">Testimonials</div>
+                <h2 class="text-3xl sm:text-4xl font-black">What People Are Saying</h2>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-gray-800/30 border border-gray-700/50 p-6 rounded-2xl backdrop-blur-sm hover:border-orange-500/30 transition">
-                    <div class="flex text-orange-400 mb-4 text-sm">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                <!-- Review 1 -->
+                <div class="bg-gray-800/50 border border-gray-700/50 p-6 rounded-xl flex flex-col justify-between hover:border-orange-500/50 transition">
+                    <div>
+                        <div class="flex text-orange-400 mb-3 text-sm">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm italic mb-4">"Food is soooooooo insane good! You still get enough fries and very tasty big burger!"</p>
                     </div>
-                    <p class="text-gray-300 text-sm italic mb-4">"Food is soooooooo insane good! You still get enough fries and very tasty big burger!"</p>
                     <div class="flex items-center justify-between border-t border-gray-700/50 pt-4 text-xs text-gray-400">
-                        <span class="font-bold text-gray-200">Jonaz</span>
+                        <span class="font-bold text-orange-400">Jonaz</span>
                         <span>Google Review</span>
                     </div>
                 </div>
 
-                <div class="bg-gray-800/30 border border-gray-700/50 p-6 rounded-2xl backdrop-blur-sm hover:border-orange-500/30 transition">
-                    <div class="flex text-orange-400 mb-4 text-sm">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                <!-- Review 2 -->
+                <div class="bg-gray-800/50 border border-gray-700/50 p-6 rounded-xl flex flex-col justify-between hover:border-orange-500/50 transition">
+                    <div>
+                        <div class="flex text-orange-400 mb-3 text-sm">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm italic mb-4">"Really good experience. The staff is really nice and the food is tasty."</p>
                     </div>
-                    <p class="text-gray-300 text-sm italic mb-4">"Really good experience. The staff is really nice and the food is tasty."</p>
                     <div class="flex items-center justify-between border-t border-gray-700/50 pt-4 text-xs text-gray-400">
-                        <span class="font-bold text-gray-200">Labeeb Gujjar</span>
+                        <span class="font-bold text-orange-400">Labeeb Gujjar</span>
                         <span>Google Review</span>
                     </div>
                 </div>
 
-                <div class="bg-gray-800/30 border border-gray-700/50 p-6 rounded-2xl backdrop-blur-sm hover:border-orange-500/30 transition">
-                    <div class="flex text-orange-400 mb-4 text-sm">
-                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                <!-- Review 3 -->
+                <div class="bg-gray-800/50 border border-gray-700/50 p-6 rounded-xl flex flex-col justify-between hover:border-orange-500/50 transition">
+                    <div>
+                        <div class="flex text-orange-400 mb-3 text-sm">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-gray-300 text-sm italic mb-4">"The smash burgers are packed with flavor, portions are generous, you won't leave hungry!"</p>
                     </div>
-                    <p class="text-gray-300 text-sm italic mb-4">"The smash burgers are packed with flavor, portions are generous, you won't leave hungry!"</p>
                     <div class="flex items-center justify-between border-t border-gray-700/50 pt-4 text-xs text-gray-400">
-                        <span class="font-bold text-gray-200">Chris N.</span>
+                        <span class="font-bold text-orange-400">Chris N.</span>
                         <span>Instagram Review</span>
                     </div>
                 </div>
@@ -575,373 +478,279 @@
         </div>
     </section>
 
-    <!-- Location & Contact Section -->
-    <section id="contact" class="py-20 bg-gray-950 border-t border-gray-800/30">
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gray-950 border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
                 <h2 class="text-3xl sm:text-4xl font-black mb-6">Visit Us or Order In</h2>
-                <p class="text-gray-400 mb-8">
-                    Come dine in, pick up your takeaway, or order delivery straight to your doorstep. We're open 7 days a week!
-                </p>
-                <div class="space-y-6 text-gray-300">
+                <p class="text-gray-400 mb-8">Come dine in, pick up your takeaway, or order delivery straight to your doorstep. We're open 7 days a week!</p>
+                <div class="space-y-4 text-gray-300">
                     <div class="flex items-start gap-4">
-                        <i class="fa-solid fa-location-dot text-orange-400 mt-1.5 text-xl"></i>
+                        <i class="fa-solid fa-location-dot text-orange-500 mt-1 text-xl"></i>
                         <div>
-                            <strong class="text-white">Address</strong><br>
+                            <strong>Address</strong><br>
                             Dageraadplaats 27, 2018 Antwerpen, Belgium
                         </div>
                     </div>
                     <div class="flex items-start gap-4">
-                        <i class="fa-solid fa-phone text-orange-400 mt-1.5 text-xl"></i>
+                        <i class="fa-solid fa-phone text-orange-500 mt-1 text-xl"></i>
                         <div>
-                            <strong class="text-white">Phone</strong><br>
-                            <a href="tel:+32497796811" class="hover:text-orange-400 transition">+32 497 79 68 11</a>
+                            <strong>Phone</strong><br>
+                            <a href="tel:+32497796811" class="hover:text-orange-400">+32 497 79 68 11</a>
                         </div>
                     </div>
                     <div class="flex items-start gap-4">
-                        <i class="fa-solid fa-clock text-orange-400 mt-1.5 text-xl"></i>
+                        <i class="fa-solid fa-clock text-orange-500 mt-1 text-xl"></i>
                         <div>
-                            <strong class="text-white">Hours</strong><br>
+                            <strong>Hours</strong><br>
                             Mon-Sun: 11:00 AM - 11:00 PM
                         </div>
                     </div>
                     <div class="flex items-start gap-4">
-                        <i class="fa-solid fa-utensils text-orange-400 mt-1.5 text-xl"></i>
+                        <i class="fa-solid fa-utensils text-orange-500 mt-1 text-xl"></i>
                         <div>
-                            <strong class="text-white">Services</strong><br>
+                            <strong>Services</strong><br>
                             Dine In • Takeaway • Delivery
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="bg-gray-800/30 border border-gray-700/50 p-8 rounded-2xl backdrop-blur-sm">
-                <h3 class="text-2xl font-black mb-4">Ready to Taste the Magic? 🤤</h3>
-                <p class="text-gray-400 text-sm mb-6">Call us or order on your favorite delivery platform. Free delivery on orders over €25!</p>
-                <div class="space-y-3">
-                    <a href="tel:+32497796811" class="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-orange-500/20 transform hover:scale-105">
-                        <i class="fa-solid fa-phone"></i> Call +32 497 79 68 11
-                    </a>
-                    <a href="https://www.instagram.com/burgers_fried_chicken" target="_blank" class="flex items-center justify-center gap-2 w-full bg-gray-700/50 hover:bg-gray-700 text-gray-200 font-bold py-4 rounded-xl transition border border-gray-600/50">
-                        <i class="fa-brands fa-instagram text-orange-400"></i> Follow on Instagram
-                    </a>
-                </div>
+            <div class="bg-gradient-to-br from-orange-500/20 to-orange-600/10 border border-orange-500/30 p-8 rounded-2xl text-center">
+                <h3 class="text-2xl font-bold mb-4">Ready to Taste the Magic? 🤤</h3>
+                <p class="text-gray-300 text-sm mb-6">Call us directly or order on delivery platforms. Free delivery on orders over €25!</p>
+                <a href="tel:+32497796811" class="inline-block w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-orange-500/30 mb-4">
+                    <i class="fa-solid fa-phone mr-2"></i>Call +32 497 79 68 11
+                </a>
+                <a href="https://www.instagram.com" target="_blank" class="inline-flex items-center justify-center gap-2 w-full bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold py-4 rounded-xl transition border border-gray-700">
+                    <i class="fa-brands fa-instagram text-orange-400"></i> Follow on Instagram
+                </a>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-950 py-12 border-t border-gray-800/30 text-center">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-center gap-6 mb-6">
-                <a href="#" class="hover:text-orange-400 transition"><i class="fa-brands fa-facebook text-xl"></i></a>
-                <a href="#" class="hover:text-orange-400 transition"><i class="fa-brands fa-instagram text-xl"></i></a>
-                <a href="#" class="hover:text-orange-400 transition"><i class="fa-brands fa-tiktok text-xl"></i></a>
-            </div>
-            <p class="text-gray-500 text-sm">&copy; 2026 Burgers & Fried Chicken (BFC) Antwerp. All rights reserved.</p>
-        </div>
+    <footer class="bg-gray-900 py-8 border-t border-gray-800 text-center text-sm text-gray-500">
+        <p>&copy; 2026 Burgers & Fried Chicken (BFC) Antwerp. All rights reserved.</p>
     </footer>
 
-    <!-- Cart Drawer -->
-    <div class="fixed inset-0 z-40 pointer-events-none" id="cartOverlay">
-        <div class="absolute inset-0 bg-black/40" id="cartOverlayBg" onclick="closeCart()"></div>
+    <!-- Clucky the Chicken - VISIBLE & INTERACTIVE -->
+    <div class="chicken-container float-animation">
+        <div class="chicken-head" onclick="toggleChat()">🐔</div>
+        <div class="speech-bubble">Click me! 💬</div>
     </div>
 
-    <aside id="cartDrawer" class="fixed right-0 top-0 bottom-0 w-full md:w-96 bg-black border-l border-white/10 z-50 pointer-events-none transform translate-x-full transition-transform duration-300 overflow-y-auto">
-        <div class="pointer-events-auto h-full flex flex-col">
-            <!-- Cart Header -->
-            <div class="border-b border-white/10 px-6 py-6 flex justify-between items-center">
-                <h2 class="text-lg font-semibold">Your Order</h2>
-                <button onclick="closeCart()" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white transition">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
+    <!-- Cart Drawer -->
+    <div id="cartOverlay" class="fixed inset-0 bg-black/40 z-40 hidden" onclick="closeCart()"></div>
+    
+    <aside id="cartDrawer" class="cart-drawer fixed right-0 top-0 bottom-0 w-full md:w-96 bg-gray-900 border-l border-orange-500/30 z-50 overflow-y-auto transform translate-x-full transition-transform duration-300">
+        <div class="p-6 border-b border-orange-500/30 flex justify-between items-center sticky top-0 bg-gray-900">
+            <h2 class="text-2xl font-black text-orange-500">Your Cart</h2>
+            <button onclick="closeCart()" class="text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-times text-2xl"></i>
+            </button>
+        </div>
 
-            <!-- Cart Items -->
-            <div class="flex-1 overflow-y-auto px-6 py-6" id="cartItemsContainer">
-                <div class="empty-state">
-                    <div class="empty-state-icon">🛒</div>
-                    <p class="text-gray-400 text-sm">Your cart is empty</p>
-                    <p class="text-gray-500 text-xs mt-2">Add items from the menu to get started</p>
+        <div id="cartItems" class="p-6">
+            <div class="text-center py-12">
+                <div style="font-size: 48px; margin-bottom: 12px;">🛒</div>
+                <p class="text-gray-400">Your cart is empty</p>
+            </div>
+        </div>
+
+        <div id="cartSummary" class="border-t border-orange-500/30 p-6 space-y-4" style="display:none;">
+            <div class="space-y-3">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Subtotal</span>
+                    <span id="subtotal" class="font-bold text-orange-400">€0.00</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Shipping</span>
+                    <span class="font-bold text-orange-400">€3.99</span>
+                </div>
+                <div class="border-t border-gray-700 pt-3 flex justify-between">
+                    <span class="font-bold text-lg">Total</span>
+                    <span id="total" class="font-black text-2xl text-orange-500">€0.00</span>
                 </div>
             </div>
-
-            <!-- Cart Summary -->
-            <div class="border-t border-white/10 px-6 py-6 space-y-4" id="cartSummary" style="display:none;">
-                <div class="summary-card">
-                    <div class="summary-row">
-                        <span class="text-gray-400">Subtotal</span>
-                        <span id="subtotal" class="price-value">€0.00</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="text-gray-400">Shipping</span>
-                        <span id="shipping" class="price-value">€3.99</span>
-                    </div>
-
-                    <!-- Promo Code -->
-                    <div class="space-y-2 mb-4 pt-4 pb-2 border-b border-white/10">
-                        <label class="text-xs font-semibold text-gray-400">Promo Code</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="promoCode" class="input-field flex-1" placeholder="Enter code">
-                            <button class="btn-secondary" onclick="applyPromo()">Apply</button>
-                        </div>
-                    </div>
-
-                    <div id="discountRow" class="summary-row" style="display:none;">
-                        <span class="text-gray-400">Discount</span>
-                        <span id="discount" class="text-green-400 font-semibold">-€0.00</span>
-                    </div>
-
-                    <div class="divider my-3"></div>
-
-                    <div class="summary-row total">
-                        <span>Total</span>
-                        <span id="total" class="price-value">€0.00</span>
-                    </div>
-                </div>
-
-                <button class="btn-primary w-full" onclick="checkout()">Proceed to Checkout</button>
-                <button class="btn-secondary w-full" onclick="closeCart()">Continue Shopping</button>
-            </div>
+            <button onclick="checkout()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-lg transition shadow-lg shadow-orange-500/30">
+                <i class="fa-solid fa-credit-card mr-2"></i>Checkout
+            </button>
+            <button onclick="closeCart()" class="w-full bg-gray-800 hover:bg-gray-700 text-gray-200 font-bold py-3 rounded-lg transition border border-gray-700">
+                Continue Shopping
+            </button>
         </div>
     </aside>
 
+    <!-- Chat Modal -->
+    <div id="chatModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center" onclick="toggleChat()">
+        <div class="bg-gray-900 border border-orange-500/50 rounded-2xl w-full max-w-md mx-4 max-h-96 flex flex-col" onclick="event.stopPropagation()">
+            <div class="p-6 border-b border-orange-500/30 flex justify-between items-center">
+                <h2 class="text-xl font-black text-orange-500">Chat with Clucky 🐔</h2>
+                <button onclick="toggleChat()" class="text-gray-400 hover:text-white">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div id="chatDisplay" class="flex-1 overflow-y-auto p-6 space-y-4 flex flex-col">
+                <div class="bg-orange-500/20 border border-orange-500/50 p-4 rounded-lg">
+                    <p class="text-sm text-orange-100">Hi! I'm Clucky! Ask me about our menu, prices, delivery, or hours! 🐔</p>
+                </div>
+            </div>
+            <div class="p-6 border-t border-orange-500/30 flex gap-2">
+                <input type="text" id="chatInput" placeholder="Ask me something..." class="flex-1 bg-gray-800 border border-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-orange-500" onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition">
+                    <i class="fa-solid fa-send"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let cart = [];
-        const SHIPPING_COST = 3.99;
+        const SHIPPING = 3.99;
 
-        // Chicken KB for chat
         const chickenKB = {
-            "opening hours": "We're open every day from 11:00 AM to 11:00 PM! 🕐",
-            "hours": "We're open every day from 11:00 AM to 11:00 PM! 🕐",
-            "most popular burger": "Our Garlic Burger is LEGENDARY! 🔥 €8.99 - customers say it's 10/10!",
-            "fried chicken": "Our fried chicken is CRISPY outside and JUICY inside! 🐔 Only €7.49 for 2 pieces!",
-            "delivery": "Yes! We deliver! 🚗 Free delivery on orders over €25! Call +32 497 79 68 11",
-            "prices": "🍔 Garlic Burger - €8.99\n🍗 2pc Chicken - €7.49\n🍟 Smash Burger Meal - €12.99\n👑 The BFC Legend - €16.99\n👨‍👩‍👧‍👦 Family Bundle - €39.99",
-            "how can i order": "Call us at +32 497 79 68 11 or visit Dageraadplaats 27! 📍",
-            "address": "Dageraadplaats 27, 2018 Antwerpen, Belgium! 📍",
-            "default": "Bawk bawk! 🐔 Great question! What else can I help you with about BFC?"
+            "menu": "We have: Garlic Burger (€8.99), 2pc Chicken (€7.49), Smash Burger Meal (€12.99), 4pc Combo (€14.99), The Legend (€16.99), Family Bundle (€39.99)! 🍔",
+            "price": "Garlic Burger - €8.99 | 2pc Chicken - €7.49 | Smash Meal - €12.99 | 4pc Combo - €14.99 | Legend - €16.99 | Family - €39.99",
+            "hours": "We're open Mon-Sun from 11:00 AM to 11:00 PM! 🕐",
+            "delivery": "Yes! We deliver! Free delivery on orders over €25! 🚗",
+            "address": "Dageraadplaats 27, 2018 Antwerpen, Belgium 📍",
+            "phone": "+32 497 79 68 11 📞",
+            "order": "Call us at +32 497 79 68 11 or use the cart on our website! 🛒",
+            "chicken": "Our fried chicken is CRISPY outside, JUICY inside! 🐔 2pc for only €7.49!",
+            "burger": "Our Garlic Burger is LEGENDARY! Secret garlic sauce makes it perfect! 🍔",
+            "default": "Bawk bawk! 🐔 Not sure about that, but I can help with menu, prices, hours, or delivery!"
         };
 
+        function toggleChat() {
+            const modal = document.getElementById('chatModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            addMessage(message, 'user');
+            input.value = '';
+
+            setTimeout(() => {
+                const response = getResponse(message);
+                addMessage(response, 'clucky');
+            }, 300);
+        }
+
+        function addMessage(text, sender) {
+            const display = document.getElementById('chatDisplay');
+            const msg = document.createElement('div');
+            msg.className = sender === 'user' ? 'text-right' : 'text-left';
+            msg.innerHTML = `
+                <div class="${sender === 'user' ? 'bg-orange-500 text-white' : 'bg-gray-800 text-gray-100'} inline-block max-w-xs px-4 py-2 rounded-lg">
+                    ${text}
+                </div>
+            `;
+            display.appendChild(msg);
+            display.scrollTop = display.scrollHeight;
+        }
+
+        function getResponse(msg) {
+            const lower = msg.toLowerCase();
+            for (const [key, val] of Object.entries(chickenKB)) {
+                if (lower.includes(key)) return val;
+            }
+            return chickenKB.default;
+        }
+
         function addToCart(product) {
-            const existingItem = cart.find(item => item.id === product.id);
-            
-            if (existingItem) {
-                existingItem.quantity += 1;
+            const existing = cart.find(p => p.id === product.id);
+            if (existing) {
+                existing.qty++;
             } else {
-                cart.push({
-                    ...product,
-                    quantity: 1
-                });
+                cart.push({...product, qty: 1});
             }
-
             updateCart();
-            showToast(`${product.name} added to cart`);
+            showToast(`✅ ${product.name} added to cart!`);
         }
 
-        function removeFromCart(productId) {
-            const item = cart.find(p => p.id === productId);
-            if (item) {
-                const cartItem = document.querySelector(`[data-product-id="${productId}"]`);
-                if (cartItem) {
-                    cartItem.classList.add('removing');
-                    setTimeout(() => {
-                        cart = cart.filter(p => p.id !== productId);
-                        updateCart();
-                    }, 300);
-                }
-            }
+        function removeFromCart(id) {
+            cart = cart.filter(p => p.id !== id);
+            updateCart();
         }
 
-        function updateQuantity(productId, change) {
-            const item = cart.find(p => p.id === productId);
+        function updateQuantity(id, change) {
+            const item = cart.find(p => p.id === id);
             if (item) {
-                item.quantity = Math.max(1, item.quantity + change);
+                item.qty = Math.max(1, item.qty + change);
                 updateCart();
             }
         }
 
         function updateCart() {
-            const isEmpty = cart.length === 0;
-
-            const badge = document.getElementById('cartCount');
-            if (isEmpty) {
-                badge.style.display = 'none';
-            } else {
-                badge.style.display = 'flex';
-                badge.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
-            }
-
-            const container = document.getElementById('cartItemsContainer');
+            const empty = cart.length === 0;
+            const badge = document.getElementById('cartBadge');
+            const items = document.getElementById('cartItems');
             const summary = document.getElementById('cartSummary');
 
-            if (isEmpty) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-state-icon">🛒</div>
-                        <p class="text-gray-400 text-sm">Your cart is empty</p>
-                        <p class="text-gray-500 text-xs mt-2">Add items from the menu to get started</p>
-                    </div>
-                `;
+            badge.style.display = empty ? 'none' : 'flex';
+            if (!empty) badge.textContent = cart.reduce((sum, p) => sum + p.qty, 0);
+
+            if (empty) {
+                items.innerHTML = '<div class="text-center py-12"><div style="font-size: 48px; margin-bottom: 12px;">🛒</div><p class="text-gray-400">Your cart is empty</p></div>';
                 summary.style.display = 'none';
             } else {
-                container.innerHTML = cart.map(item => `
-                    <div class="cart-item" data-product-id="${item.id}">
-                        <div class="flex gap-4 flex-1">
-                            <div class="w-20 h-20 bg-gray-900 rounded-lg flex items-center justify-center text-4xl flex-shrink-0">${item.image}</div>
-                            <div class="flex-1">
-                                <h3 class="font-semibold text-sm mb-1">${item.name}</h3>
-                                <div class="text-xs text-gray-500 mb-3">
-                                    ${Object.values(item.variants || {}).join(' • ')}
-                                </div>
-                                <div class="quantity-control">
-                                    <button onclick="updateQuantity(${item.id}, -1)">−</button>
-                                    <input type="number" value="${item.quantity}" readonly>
-                                    <button onclick="updateQuantity(${item.id}, 1)">+</button>
-                                </div>
-                            </div>
+                items.innerHTML = cart.map(p => `
+                    <div class="bg-gray-800/50 border border-gray-700 p-4 rounded-lg mb-4 flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-orange-400">${p.name}</h3>
+                            <p class="text-sm text-gray-400 mt-2">€${(p.price * p.qty).toFixed(2)}</p>
                         </div>
-                        <div class="flex flex-col items-end gap-3 flex-shrink-0">
-                            <div class="text-right">
-                                <div class="price-label">Subtotal</div>
-                                <div class="price-value">€${(item.price * item.quantity).toFixed(2)}</div>
-                            </div>
-                            <button class="remove-button" onclick="removeFromCart(${item.id})">
-                                <i class="fas fa-trash text-sm"></i>
+                        <div class="quantity-control">
+                            <button onclick="updateQuantity(${p.id}, -1)">−</button>
+                            <input type="text" value="${p.qty}" readonly>
+                            <button onclick="updateQuantity(${p.id}, 1)">+</button>
+                            <button onclick="removeFromCart(${p.id})" class="ml-2 bg-red-600 text-white px-2 py-1 rounded">
+                                <i class="fa-solid fa-trash text-xs"></i>
                             </button>
                         </div>
                     </div>
-                    <div class="divider my-4"></div>
                 `).join('');
                 summary.style.display = 'block';
+
+                const subtotal = cart.reduce((sum, p) => sum + (p.price * p.qty), 0);
+                document.getElementById('subtotal').textContent = '€' + subtotal.toFixed(2);
+                document.getElementById('total').textContent = '€' + (subtotal + SHIPPING).toFixed(2);
             }
-
-            updatePrices();
-        }
-
-        function updatePrices() {
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const discount = getDiscount();
-            const total = subtotal - discount + SHIPPING_COST;
-
-            document.getElementById('subtotal').textContent = `€${subtotal.toFixed(2)}`;
-            document.getElementById('total').textContent = `€${total.toFixed(2)}`;
-
-            if (discount > 0) {
-                document.getElementById('discountRow').style.display = 'flex';
-                document.getElementById('discount').textContent = `-€${discount.toFixed(2)}`;
-            } else {
-                document.getElementById('discountRow').style.display = 'none';
-            }
-        }
-
-        function getDiscount() {
-            const code = document.getElementById('promoCode').value.toUpperCase();
-            const codes = {
-                'BFC10': 0.10,
-                'WELCOME': 0.15,
-                'SAVE20': 0.20
-            };
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            return codes[code] ? subtotal * codes[code] : 0;
-        }
-
-        function applyPromo() {
-            updatePrices();
-            showToast('Promo code applied');
         }
 
         function openCart() {
-            const drawer = document.getElementById('cartDrawer');
-            const overlay = document.getElementById('cartOverlay');
-            drawer.classList.add('cart-drawer');
-            drawer.style.transform = 'translateX(0)';
-            overlay.style.pointerEvents = 'auto';
+            document.getElementById('cartDrawer').style.transform = 'translateX(0)';
+            document.getElementById('cartOverlay').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
         }
 
         function closeCart() {
-            const drawer = document.getElementById('cartDrawer');
-            const overlay = document.getElementById('cartOverlay');
-            drawer.classList.add('exit');
-            setTimeout(() => {
-                drawer.style.transform = 'translateX(100%)';
-                drawer.classList.remove('cart-drawer', 'exit');
-                overlay.style.pointerEvents = 'none';
-                document.body.style.overflow = 'auto';
-            }, 300);
+            document.getElementById('cartDrawer').style.transform = 'translateX(100%)';
+            document.getElementById('cartOverlay').classList.add('hidden');
+            document.body.style.overflow = 'auto';
         }
 
         function checkout() {
-            showToast('Redirecting to checkout...');
-            setTimeout(() => {
-                alert('Order Placed!\n\nTotal: ' + document.getElementById('total').textContent);
-                cart = [];
-                updateCart();
-                closeCart();
-            }, 1500);
+            const total = document.getElementById('total').textContent;
+            showToast(`🎉 Order placed! Total: ${total}`);
+            cart = [];
+            updateCart();
+            setTimeout(() => closeCart(), 1500);
         }
 
-        function showToast(message) {
+        function showToast(msg) {
             const toast = document.createElement('div');
             toast.className = 'toast';
-            toast.textContent = message;
+            toast.textContent = msg;
             document.body.appendChild(toast);
-
             setTimeout(() => {
-                toast.style.animation = 'slideUp 0.3s cubic-bezier(0.7, 0, 0.84, 0) reverse forwards';
+                toast.style.opacity = '0';
                 setTimeout(() => toast.remove(), 300);
-            }, 2000);
-        }
-
-        // Chat functions
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            
-            if (!message) return;
-
-            addMessageToChat(message, 'user');
-            input.value = '';
-
-            setTimeout(() => {
-                const response = getCluckyResponse(message);
-                addMessageToChat(response, 'clucky');
-            }, 500);
-        }
-
-        function askQuestion(question) {
-            document.getElementById('chatInput').value = question;
-            sendMessage();
-        }
-
-        function addMessageToChat(message, sender) {
-            const chatDisplay = document.getElementById('chatDisplay');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'slide-up flex ' + (sender === 'user' ? 'justify-end' : 'items-end gap-4');
-            
-            if (sender === 'user') {
-                messageDiv.innerHTML = `<div class="bg-orange-500 text-white p-3 rounded-lg max-w-xs">${message}</div>`;
-            } else {
-                messageDiv.innerHTML = `
-                    <div class="chicken-mascot" style="width: 60px; height: 60px; font-size: 30px;">🐔</div>
-                    <div class="chat-bubble" style="max-width: 300px;">${message.replace(/\n/g, '<br>')}</div>
-                `;
-            }
-            
-            chatDisplay.appendChild(messageDiv);
-            chatDisplay.scrollTop = chatDisplay.scrollHeight;
-        }
-
-        function getCluckyResponse(userMessage) {
-            const lowerMessage = userMessage.toLowerCase();
-            
-            for (const [key, response] of Object.entries(chickenKB)) {
-                if (lowerMessage.includes(key)) {
-                    return response;
-                }
-            }
-            
-            return chickenKB.default;
+            }, 3000);
         }
     </script>
 
